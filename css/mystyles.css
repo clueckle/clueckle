@@ -1,0 +1,177 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Centered Container */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Body */
+body {
+    background-color: #f9f9f9;
+    font-family: Georgia, serif;
+    color: #222222;
+}
+
+/* Headings */
+h1 {
+    font-family: 'Times New Roman', serif;
+    font-size: 4rem;
+    color: white;
+    letter-spacing: 3px;
+}
+
+h2 {
+    font-family: 'Times New Roman', serif;
+    font-size: 2.8rem;
+    color: #2d5a27;
+    margin-bottom: 15px;
+    margin-top: 30px;
+}
+
+h3 {
+    font-family: 'Times New Roman', serif;
+    font-size: 2.2rem;
+    color: #2d5a27;
+    margin-bottom: 10px;
+    margin-top: 25px;
+}
+
+/* Paragraphs */
+p {
+    font-family: Georgia, serif;
+    font-size: 1.6rem;
+    color: #444444;
+    line-height: 2;
+    margin-bottom: 15px;
+}
+
+/* Lists */
+ol, ul {
+    font-family: Georgia, serif;
+    font-size: 1.6rem;
+    color: #444444;
+    line-height: 2.2;
+    margin-left: 30px;
+    margin-bottom: 15px;
+}
+
+/* Links */
+a {
+    color: #2d5a27;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* DIV 1 - Header */
+#header {
+    background-color: #2d5a27;
+    text-align: center;
+    padding: 60px 20px;
+    border-bottom: 5px solid #c9a84c;
+}
+
+#header a {
+    display: inline-block;
+    color: #c9a84c;
+    font-size: 1.2rem;
+    margin-top: 15px;
+    border: 2px solid #c9a84c;
+    padding: 8px 24px;
+    letter-spacing: 1px;
+}
+
+#header a:hover {
+    background-color: #c9a84c;
+    color: #1a3a1f;
+    text-decoration: none;
+}
+
+/* DIV 2 - Main Content */
+#main-content {
+    padding: 40px 30px;
+    background-color: #ffffff;
+}
+
+/* DIV 3 - Tournaments */
+#tournaments-section {
+    background-color: #f4f9f4;
+    padding: 40px 30px;
+}
+
+#tournaments-section h2 {
+    color: #2d5a27;
+    border-bottom: 2px solid #c9a84c;
+    padding-bottom: 8px;
+}
+
+#tournaments-section h3 {
+    color: #2d5a27;
+}
+
+#tournaments-section p {
+    color: #444444;
+}
+
+/* DIV 4 - Watch */
+#watch-section {
+    padding: 40px 30px;
+    background-color: #ffffff;
+}
+
+/* DIV 5 - Tableau */
+#tableau-section {
+    padding: 40px 30px;
+    background-color: #f4f9f4;
+}
+
+/* DIV 6 - Footer */
+#footer {
+    background-color: #2d5a27;
+    color: white;
+    text-align: center;
+    padding: 30px 20px;
+    border-top: 5px solid #c9a84c;
+}
+
+#footer a {
+    color: #c9a84c;
+    font-size: 1.2rem;
+    margin: 0 10px;
+}
+
+#footer a:hover {
+    color: white;
+    text-decoration: none;
+}
+
+/* Images */
+img {
+    margin: 15px auto 25px auto;
+    display: block;
+    width: auto;
+    max-width: 80%;
+    height: auto;
+}
+
+/* iframe */
+iframe {
+    margin: 20px auto;
+    display: block;
+    width: 80%;
+    height: 500px;
+}
+
+/* Tableau */
+#tableau-section .tableauPlaceholder {
+    margin: 0 auto;
+    display: block;
+    width: 80% !important;
+}

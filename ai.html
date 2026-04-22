@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Golf</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: #1a3a1f;
+            font-family: 'Nunito', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+            background-image: radial-gradient(ellipse at top, #2d5a27 0%, #1a3a1f 70%);
+        }
+
+        h1 {
+            font-family: 'Fredoka One', cursive;
+            color: #c9a84c;
+            font-size: 2.8rem;
+            text-shadow: 0 3px 10px rgba(0,0,0,0.5);
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+        }
+
+        #nav-links {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .nav-link {
+            color: #a8d5a2;
+            text-decoration: none;
+            font-size: 0.9rem;
+            border: 1px solid #a8d5a2;
+            padding: 5px 15px;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #c9a84c;
+            border-color: #c9a84c;
+        }
+
+        #hud {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 15px;
+            background: rgba(0,0,0,0.3);
+            padding: 10px 30px;
+            border-radius: 50px;
+            border: 2px solid #c9a84c;
+        }
+
+        .hud-item { text-align: center; color: white; }
+        .hud-label { font-size: 0.75rem; color: #a8d5a2; text-transform: uppercase; letter-spacing: 1px; }
+        .hud-value { font-family: 'Fredoka One', cursive; font-size: 1.6rem; color: #c9a84c; }
+
+        #game-container {
+            position: relative;
+            border: 4px solid #c9a84c;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            cursor: crosshair;
+        }
+
+        canvas { display: block; background: #3a8c3a; }
+
+        #message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.85);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 12px;
+            text-align: center;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.5rem;
+            border: 2px solid #c9a84c;
+            display: none;
+            z-index: 10;
+        }
+
+        #message .sub {
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.95rem;
+            color: #a8d5a2;
+            margin-top: 8px;
+        }
+
+        #controls { margin-top: 15px; display: flex; gap: 15px; }
+
+        button {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.1rem;
+            padding: 10px 28px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        #btn-next { background: #c9a84c; color: #1a3a1f; }
+        #btn-next:hover { background: #e8c97a; transform: translateY(-2px); }
+        #btn-restart { background: transparent; color: #a8d5a2; border: 2px solid #a8d5a2; }
+        #btn-restart:hover { background: #a8d5a2; color: #1a3a1f; transform: translateY(-2px); }
+
+        #power-bar-container {
+            width: 600px;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #power-label { color: #a8d5a2; font-size: 0.85rem; width: 50px; text-align: right; }
+
+        #power-bar-bg {
+            flex: 1;
+            height: 12px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 6px;
+            border: 1px solid #555;
+            overflow: hidden;
+        }
+
+        #power-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, #4caf50, #c9a84c, #e74c3c);
+            border-radius: 6px;
+            transition: width 0.05s;
+        }
+
+        #instructions { color: #a8d5a2; font-size: 0.85rem; margin-top: 8px; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <h1>⛳ Mini Golf</h1>
+
+    <div id="nav-links">
+        <a href="fromscratch.html" class="nav-link">← Golf Page</a>
+        <a href="index.html" class="nav-link">← Back to Resume</a>
+    </div>
+
+    <div id="hud">
+        <div class="hud-item">
+            <div class="hud-label">Hole</div>
+            <div class="hud-value" id="hud-hole">1 / 5</div>
+        </div>
+        <div class="hud-item">
+            <div class="hud-label">Strokes</div>
+            <div class="hud-value" id="hud-strokes">0</div>
+        </div>
+        <div class="hud-item">
+            <div class="hud-label">Par</div>
+            <div class="hud-value" id="hud-par">3</div>
+        </div>
+        <div class="hud-item">
+            <div class="hud-label">Total</div>
+            <div class="hud-value" id="hud-total">0</div>
+        </div>
+    </div>
+
+    <div id="game-container">
+        <canvas id="canvas" width="600" height="400"></canvas>
+        <div id="message">
+            <div id="message-title">Hole in One!</div>
+            <div class="sub" id="message-sub">Click Next Hole to continue</div>
+        </div>
+    </div>
+
+    <div id="power-bar-container">
+        <span id="power-label">Power</span>
+        <div id="power-bar-bg"><div id="power-bar"></div></div>
+    </div>
+
+    <div id="instructions">Click and hold to charge shot · Release to swing · Aim with your mouse</div>
+
+    <div id="controls">
+        <button id="btn-next" onclick="nextHole()">Next Hole ⛳</button>
+        <button id="btn-restart" onclick="restartGame()">Restart 🔄</button>
+    </div>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    let state = {
+        hole: 0,
+        strokes: 0,
+        total: 0,
+        ball: { x: 0, y: 0, vx: 0, vy: 0, r: 8 },
+        charging: false,
+        power: 0,
+        mouse: { x: 0, y: 0 },
+        inMotion: false,
+        holed: false,
+        animFrame: null
+    };
+
+    const holes = [
+        {
+            par: 3,
+            ball: { x: 80, y: 200 },
+            hole: { x: 520, y: 200, r: 14 },
+            walls: [
+                { x: 40, y: 140, w: 520, h: 15 },
+                { x: 40, y: 245, w: 520, h: 15 },
+                { x: 40, y: 140, w: 15, h: 120 },
+                { x: 545, y: 140, w: 15, h: 120 }
+            ],
+            obstacles: [
+                { x: 250, y: 155, w: 20, h: 60 },
+                { x: 370, y: 185, w: 20, h: 60 }
+            ],
+            color: '#2d8a2d'
+        },
+        {
+            par: 3,
+            ball: { x: 80, y: 320 },
+            hole: { x: 520, y: 80, r: 14 },
+            walls: [
+                { x: 40, y: 40, w: 520, h: 15 },
+                { x: 40, y: 355, w: 520, h: 15 },
+                { x: 40, y: 40, w: 15, h: 330 },
+                { x: 545, y: 40, w: 15, h: 330 },
+                { x: 200, y: 150, w: 15, h: 220 },
+                { x: 360, y: 40, w: 15, h: 200 }
+            ],
+            obstacles: [],
+            color: '#3a7a3a'
+        },
+        {
+            par: 4,
+            ball: { x: 80, y: 200 },
+            hole: { x: 520, y: 200, r: 14 },
+            walls: [
+                { x: 40, y: 100, w: 520, h: 15 },
+                { x: 40, y: 285, w: 520, h: 15 },
+                { x: 40, y: 100, w: 15, h: 200 },
+                { x: 545, y: 100, w: 15, h: 200 }
+            ],
+            obstacles: [
+                { x: 180, y: 115, w: 20, h: 80 },
+                { x: 300, y: 205, w: 20, h: 80 },
+                { x: 420, y: 115, w: 20, h: 80 }
+            ],
+            color: '#2a7a2a'
+        },
+        {
+            par: 4,
+            ball: { x: 80, y: 200 },
+            hole: { x: 520, y: 200, r: 14 },
+            walls: [
+                { x: 40, y: 60, w: 520, h: 15 },
+                { x: 40, y: 325, w: 520, h: 15 },
+                { x: 40, y: 60, w: 15, h: 280 },
+                { x: 545, y: 60, w: 15, h: 280 },
+                { x: 280, y: 75, w: 15, h: 90 },
+                { x: 280, y: 235, w: 15, h: 105 }
+            ],
+            obstacles: [
+                { x: 150, y: 130, w: 20, h: 60 },
+                { x: 390, y: 210, w: 20, h: 60 }
+            ],
+            color: '#357a35'
+        },
+        {
+            par: 5,
+            ball: { x: 80, y: 200 },
+            hole: { x: 520, y: 200, r: 14 },
+            walls: [
+                { x: 40, y: 60, w: 520, h: 15 },
+                { x: 40, y: 325, w: 520, h: 15 },
+                { x: 40, y: 60, w: 15, h: 280 },
+                { x: 545, y: 60, w: 15, h: 280 }
+            ],
+            obstacles: [
+                { x: 160, y: 75, w: 20, h: 100 },
+                { x: 240, y: 225, w: 20, h: 100 },
+                { x: 340, y: 75, w: 20, h: 100 },
+                { x: 420, y: 225, w: 20, h: 100 }
+            ],
+            color: '#2d6e2d'
+        }
+    ];
+
+    function loadHole(index) {
+        const h = holes[index];
+        state.ball.x = h.ball.x;
+        state.ball.y = h.ball.y;
+        state.ball.vx = 0;
+        state.ball.vy = 0;
+        state.strokes = 0;
+        state.holed = false;
+        state.inMotion = false;
+        state.charging = false;
+        state.power = 0;
+        document.getElementById('message').style.display = 'none';
+        document.getElementById('power-bar').style.width = '0%';
+        updateHUD();
+    }
+
+    function updateHUD() {
+        document.getElementById('hud-hole').textContent = `${state.hole + 1} / ${holes.length}`;
+        document.getElementById('hud-strokes').textContent = state.strokes;
+        document.getElementById('hud-par').textContent = holes[state.hole].par;
+        document.getElementById('hud-total').textContent = state.total;
+    }
+
+    function drawHole() {
+        const h = holes[state.hole];
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = h.color;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = 'rgba(0,0,0,0.04)';
+        for (let i = 0; i < 200; i++) {
+            ctx.beginPath();
+            ctx.arc((i * 97) % canvas.width, (i * 137) % canvas.height, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        ctx.fillStyle = '#5a3a1a';
+        h.walls.forEach(w => { ctx.fillRect(w.x, w.y, w.w, w.h); });
+
+        h.obstacles.forEach(o => {
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(o.x, o.y, o.w, o.h);
+            ctx.fillStyle = 'rgba(0,0,0,0.15)';
+            for (let i = o.y + 8; i < o.y + o.h; i += 12) {
+                ctx.fillRect(o.x + 2, i, o.w - 4, 2);
+            }
+        });
+
+        const hole = h.hole;
+        ctx.beginPath();
+        ctx.arc(hole.x, hole.y, hole.r, 0, Math.PI * 2);
+        ctx.fillStyle = '#111';
+        ctx.fill();
+
+        ctx.strokeStyle = '#888';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(hole.x, hole.y - hole.r);
+        ctx.lineTo(hole.x, hole.y - hole.r - 30);
+        ctx.stroke();
+        ctx.fillStyle = '#e74c3c';
+        ctx.beginPath();
+        ctx.moveTo(hole.x, hole.y - hole.r - 30);
+        ctx.lineTo(hole.x + 18, hole.y - hole.r - 22);
+        ctx.lineTo(hole.x, hole.y - hole.r - 14);
+        ctx.fill();
+
+        if (state.charging && !state.inMotion && !state.holed) {
+            const dx = state.ball.x - state.mouse.x;
+            const dy = state.ball.y - state.mouse.y;
+            const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+            const nx = dx / dist;
+            const ny = dy / dist;
+            ctx.setLineDash([6, 6]);
+            ctx.strokeStyle = `rgba(255,255,255,${state.power / 100 * 0.8 + 0.1})`;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(state.ball.x, state.ball.y);
+            ctx.lineTo(state.ball.x + nx * state.power * 1.5, state.ball.y + ny * state.power * 1.5);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        ctx.beginPath();
+        ctx.arc(state.ball.x + 3, state.ball.y + 3, state.ball.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0,0,0,0.3)';
+        ctx.fill();
+
+        const grad = ctx.createRadialGradient(
+            state.ball.x - 3, state.ball.y - 3, 1,
+            state.ball.x, state.ball.y, state.ball.r
+        );
+        grad.addColorStop(0, '#ffffff');
+        grad.addColorStop(1, '#cccccc');
+        ctx.beginPath();
+        ctx.arc(state.ball.x, state.ball.y, state.ball.r, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.strokeStyle = '#aaa';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.fillStyle = 'rgba(0,0,0,0.08)';
+        [[-3, -2], [2, -3], [-1, 3], [3, 2]].forEach(([dx, dy]) => {
+            ctx.beginPath();
+            ctx.arc(state.ball.x + dx, state.ball.y + dy, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+        });
+    }
+
+    function rectCollide(ball, rect) {
+        const nearX = Math.max(rect.x, Math.min(ball.x, rect.x + rect.w));
+        const nearY = Math.max(rect.y, Math.min(ball.y, rect.y + rect.h));
+        const dx = ball.x - nearX;
+        const dy = ball.y - nearY;
+        return Math.sqrt(dx * dx + dy * dy) < ball.r;
+    }
+
+    function resolveRect(ball, rect) {
+        const nearX = Math.max(rect.x, Math.min(ball.x, rect.x + rect.w));
+        const nearY = Math.max(rect.y, Math.min(ball.y, rect.y + rect.h));
+        const dx = ball.x - nearX;
+        const dy = ball.y - nearY;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 0.01;
+        const nx = dx / dist;
+        const ny = dy / dist;
+
+        const overlap = ball.r - dist;
+        if (overlap > 0) {
+            ball.x += nx * (overlap + 0.5);
+            ball.y += ny * (overlap + 0.5);
+        }
+
+        const dot = ball.vx * nx + ball.vy * ny;
+        if (dot < 0) {
+            ball.vx = (ball.vx - 2 * dot * nx) * 0.65;
+            ball.vy = (ball.vy - 2 * dot * ny) * 0.65;
+        }
+    }
+
+    function gameLoop() {
+        if (state.inMotion && !state.holed) {
+            const h = holes[state.hole];
+            const steps = 8;
+
+            for (let s = 0; s < steps; s++) {
+                state.ball.x += state.ball.vx / steps;
+                state.ball.y += state.ball.vy / steps;
+
+                [...h.walls, ...h.obstacles].forEach(rect => {
+                    if (rectCollide(state.ball, rect)) {
+                        resolveRect(state.ball, rect);
+                    }
+                });
+            }
+
+            state.ball.vx *= 0.988;
+            state.ball.vy *= 0.988;
+
+            const speed = Math.sqrt(state.ball.vx ** 2 + state.ball.vy ** 2);
+            if (speed < 0.15) {
+                state.ball.vx = 0;
+                state.ball.vy = 0;
+                state.inMotion = false;
+            }
+
+            const hx = h.hole.x - state.ball.x;
+            const hy = h.hole.y - state.ball.y;
+            if (Math.sqrt(hx * hx + hy * hy) < h.hole.r) {
+                state.holed = true;
+                state.inMotion = false;
+                state.total += state.strokes;
+                showHoledMessage();
+                updateHUD();
+            }
+        }
+
+        drawHole();
+        state.animFrame = requestAnimationFrame(gameLoop);
+    }
+
+    function showHoledMessage() {
+        const par = holes[state.hole].par;
+        const diff = state.strokes - par;
+        let title, sub;
+        if (state.strokes === 1) { title = '🏆 Hole in One!'; sub = 'Incredible shot!'; }
+        else if (diff <= -2) { title = '🦅 Eagle!'; sub = `${state.strokes} strokes — amazing!`; }
+        else if (diff === -1) { title = '🐦 Birdie!'; sub = `${state.strokes} strokes — great shot!`; }
+        else if (diff === 0) { title = '✅ Par!'; sub = `${state.strokes} strokes — solid play!`; }
+        else if (diff === 1) { title = '😬 Bogey'; sub = `${state.strokes} strokes`; }
+        else { title = `😅 +${diff}`; sub = `${state.strokes} strokes — keep practicing!`; }
+
+        const isLast = state.hole >= holes.length - 1;
+        document.getElementById('message-title').textContent = title;
+        document.getElementById('message-sub').textContent = isLast
+            ? `${sub} — Game over! Total: ${state.total} strokes`
+            : `${sub} — Click Next Hole to continue`;
+        document.getElementById('btn-next').textContent = isLast ? 'Play Again 🔄' : 'Next Hole ⛳';
+        document.getElementById('message').style.display = 'block';
+    }
+
+    function nextHole() {
+        if (state.hole >= holes.length - 1) { restartGame(); return; }
+        state.hole++;
+        loadHole(state.hole);
+    }
+
+    function restartGame() {
+        state.hole = 0;
+        state.total = 0;
+        loadHole(0);
+    }
+
+    canvas.addEventListener('mousedown', e => {
+        if (state.inMotion || state.holed) return;
+        state.charging = true;
+    });
+
+    canvas.addEventListener('mousemove', e => {
+        const rect = canvas.getBoundingClientRect();
+        state.mouse.x = e.clientX - rect.left;
+        state.mouse.y = e.clientY - rect.top;
+    });
+
+    canvas.addEventListener('mouseup', e => {
+        if (!state.charging || state.holed) return;
+        state.charging = false;
+        const dx = state.ball.x - state.mouse.x;
+        const dy = state.ball.y - state.mouse.y;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        const power = Math.min(state.power, 100) / 100;
+        state.ball.vx = (dx / dist) * power * 14;
+        state.ball.vy = (dy / dist) * power * 14;
+        state.power = 0;
+        document.getElementById('power-bar').style.width = '0%';
+        state.strokes++;
+        state.inMotion = true;
+        updateHUD();
+    });
+
+    setInterval(() => {
+        if (state.charging && !state.inMotion) {
+            state.power = Math.min(state.power + 2, 100);
+            document.getElementById('power-bar').style.width = state.power + '%';
+        }
+    }, 30);
+
+    loadHole(0);
+    gameLoop();
+</script>
+
+</body>
+</html>
